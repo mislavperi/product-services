@@ -26,11 +26,9 @@ func New(auth *authenticator.Authenticator) *gin.Engine {
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("auth-session", store))
 
-	router.Static("/public", "web/static")
-	router.LoadHTMLGlob("web/template/*")
-
-	router.GET("/", func(ctx *gin.Context) {
-		ctx.HTML(http.StatusOK, "home.html", nil)
+	router.GET("/", func(c *gin.Context) {
+		name := "string"
+		c.String(http.StatusOK, "Hello %s", name)
 	})
 	router.GET("/login", login.Handler(auth))
 	router.GET("/callback", callback.Handler(auth))
