@@ -4,20 +4,34 @@ services:
   frontend:
     container_name: product-frontend
     build: client
-    
+    ports:
+      - 3000:80
   products:
     container_name: products
-    build: services/
-  environment:
-    - PGUSER=postgres
-    - PGPASSWORD=root
-    - PGDATABASE=products
-    - PGHOST=product-database
-    - PGPORT=5432
-  ports:
-    - 4000:4000
-  depends_on:
-    - products-database
+    build: services/main
+    environment:
+      - PGUSER=postgres
+      - PGPASSWORD=root
+      - PGDATABASE=products
+      - PGHOST=product-database
+      - PGPORT=5432
+    ports:
+      - 4000:4000
+    depends_on:
+      - products-database
+  warehouse:
+    container_name: warehouse-service
+    build: services/warehouse
+    environment:
+      - PGUSER=postgres
+      - PGPASSWORD=root
+      - PGDATABASE=warehouse
+      - PGHOST=warehouse-database
+      - PGPORT=5432
+    ports:
+      - 4001:4000
+    depends_on:
+      - warehouse-database
   auth:
     container_name: products-auth
   gateway:
