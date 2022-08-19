@@ -6,6 +6,7 @@ defmodule Main.Catalog.Product do
     field :description, :string
     field :price, :decimal
     field :title, :string
+    field :highlight, :boolean
 
     timestamps()
   end
@@ -13,7 +14,7 @@ defmodule Main.Catalog.Product do
   @doc false
   def changeset(product, attrs) do
     product
-    |> cast(attrs, [:title, :description, :price])
-    |> validate_required([:title, :description, :price])
+    |> cast(attrs, [:title, :description, :price, :highlight])
+    |> validate_required([:title, :description, :price, :highlight])
   end
 end
