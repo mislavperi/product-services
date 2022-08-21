@@ -4,8 +4,9 @@ import Config
 config :warehouse, Warehouse.Repo,
   username: "postgres",
   password: "root",
-  hostname: "localhost",
-  database: "warehouse_dev",
+  hostname: System.get_env("PGHOST"),
+  database: System.get_env("PGDATABASE"),
+  port: 5002,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10

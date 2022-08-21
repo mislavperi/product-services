@@ -4,8 +4,9 @@ import Config
 config :main, Main.Repo,
   username: "postgres",
   password: "root",
-  hostname: "localhost",
-  database: "main_dev",
+  hostname: System.get_env("PGHOST"),
+  database: System.get_env("PGDATABASE"),
+  port: 5001,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10

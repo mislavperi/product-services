@@ -1,24 +1,24 @@
-version: 3.9
+version: "3.9"
 
 services:
-  frontend:
-    container_name: product-frontend
-    build: client
-    ports:
-      - 3000:80
+  # frontend:
+  #   container_name: product-frontend
+  #   build: client
+  #   ports:
+  #     - 3000:80
   products:
-    container_name: products
+    container_name: products-service
     build: services/main
     environment:
       - PGUSER=postgres
       - PGPASSWORD=root
       - PGDATABASE=products
-      - PGHOST=product-database
-      - PGPORT=5432
+      - PGHOST=localhost
+      - PGPORT=5001
     ports:
       - 4000:4000
     depends_on:
-      - products-database
+      - product-database
   warehouse:
     container_name: warehouse-service
     build: services/warehouse
@@ -26,8 +26,8 @@ services:
       - PGUSER=postgres
       - PGPASSWORD=root
       - PGDATABASE=warehouse
-      - PGHOST=warehouse-database
-      - PGPORT=5432
+      - PGHOST=localhost
+      - PGPORT=5003
     ports:
       - 4001:4000
     depends_on:
@@ -39,16 +39,20 @@ services:
       - PGUSER=postgres
       - PGPASSWORD=root
       - PGDATABASE=orders
-      - PGHOST=order-database
-      - PGPORT=5432
+      - PGHOST=localhost
+      - PGPORT=5002
     ports:
       - 4002:4000
     depends_on:
       - order-database
-  auth:
-    container_name: products-auth
+  # auth:
+  #   container_name: products-auth
   gateway:
     container_name: product-gateway
+    build: ./nginx
+    command: service nginx start
+    ports:
+    - "80:80"
   product-database:
     container_name: product-database
     image: postgres
@@ -59,13 +63,9 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
       - POSTGRES_DB=products
     volumes:
-      - database/product:/var/lib/postgresql/data
-
-    adminer:
-      image: adminer
-      restart: always
-      ports:
-        - 8080:8083
+      - ./database/product:/var/lib/postgresql/data
+    ports:
+      - 5001:5432
   warehouse-database:
     container_name: warehouse-database
     image: postgres
@@ -76,13 +76,9 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
       - POSTGRES_DB=warehouse
     volumes:
-      - database/warehouse:/var/lib/postgresql/data
-
-    adminer:
-      image: adminer
-      restart: always
-      ports:
-        - 8080:8082
+      - ./database/warehouse:/var/lib/postgresql/data
+    ports:
+      - 5002:5432
   order-database:
     container_name: order-database
     image: postgres
@@ -93,10 +89,6 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
       - POSTGRES_DB=orders
     volumes:
-      - database/orders:/var/lib/postgresql/data
-
-    adminer:
-      image: adminer
-      restart: always
-      ports:
-        - 8080:8081
+      - ./database/orders:/var/lib/postgresql/data
+    ports:
+      - 5003:5432
