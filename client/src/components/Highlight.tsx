@@ -31,7 +31,10 @@ const Highlight: React.FC<HighlightProps> = (props) => {
               cursor: "pointer",
             }}
           >
-            <Image src={item.image} />
+            <Image
+              src={item.image}
+              fallbackSrc="https://dummyimage.com/600x400/000/fff"
+            />
             <Text m="2" fontSize={22}>
               {item.title}
             </Text>

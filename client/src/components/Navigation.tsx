@@ -1,9 +1,62 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-import { Flex, Link, Text, Box } from "@chakra-ui/react";
-import { VscAccount } from "react-icons/vsc";
+import {
+  Flex,
+  Link,
+  Text,
+  Box,
+  Image,
+  Modal,
+  Button,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { VscAccount, VscError } from "react-icons/vsc";
+import { AiOutlineShoppingCart, AiOutlineClose } from "react-icons/ai";
+import { useAuth0 } from "@auth0/auth0-react";
+
+interface Products {
+  title: string;
+  image: string;
+  description: string;
+  price: number;
+}
 
 export default function Navigation(): JSX.Element {
+  const { loginWithRedirect, user, isAuthenticated, logout } = useAuth0();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [cart, setCart] = useState<Products[]>([]);
+
+  const triggerUpdates = () => {
+    const items = localStorage.getItem("cart") || "";
+    if (items != "") {
+      const parsed = JSON.parse(items);
+      setCart(parsed);
+    }
+    onOpen();
+  };
+
+  const concatValues = () => {
+    return cart.reduce((p: any, curr: any) => {
+      return p + curr.price;
+    }, 0);
+  };
+
+  const removeItem = (title: string) => {
+    const items = localStorage.getItem("cart") || "";
+    if (items != "") {
+      const parsed = JSON.parse(items);
+      const filteredItems = parsed.filter((item: any) => item.title !== title);
+      localStorage.setItem("cart", JSON.stringify(filteredItems));
+      setCart(filteredItems);
+    }
+  };
+
   return (
     <Flex
       minHeight="40px"
@@ -29,15 +82,103 @@ export default function Navigation(): JSX.Element {
         height="100%"
         mr="20px"
       >
-        <Flex
-          _hover={{
-            cursor: "pointer",
-            color: "red",
-          }}
-        >
-          <Text mr="10px">Login</Text>
-          <VscAccount size={24} />
-        </Flex>
+        {isAuthenticated ? (
+          <Flex>
+            <Flex>
+              <Text>{user?.name}</Text>
+              <Image
+                src={user?.picture}
+                alt={user?.name}
+                boxSize="24px"
+                borderRadius="50%"
+                ml="5px"
+                mr="5px"
+              />
+              <VscError
+                style={{
+                  cursor: "pointer",
+                  marginRight: "5px",
+                }}
+                size={24}
+                onClick={() => logout({ returnTo: window.location.origin })}
+              />
+            </Flex>
+            <AiOutlineShoppingCart
+              style={{
+                cursor: "pointer",
+              }}
+              size={24}
+              onClick={triggerUpdates}
+            />
+            <Modal isOpen={isOpen} onClose={onClose}>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Shopping cart</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  {cart.length === 0 ? (
+                    <Text>Cart is empty</Text>
+                  ) : (
+                    cart.map((item: any) => {
+                      return (
+                        <Flex
+                          border="1px solid grey"
+                          align="center"
+                          m="10px"
+                          borderRadius="md"
+                        >
+                          <Image
+                            src={item.image}
+                            fallbackSrc="https://cdn.dribbble.com/users/27766/screenshots/3488007/media/ac55b16291e99eb1740c17b4ac793454.png"
+                            boxSize="110px"
+                            borderRadius="md"
+                            m="20px"
+                          />
+                          <Box>
+                            <Text fontSize="22px">{item.title}</Text>
+                            <Text fontSize={14}>{item.description}</Text>
+                            <Text>{item.price} €</Text>
+                          </Box>
+                          <AiOutlineClose
+                            size={18}
+                            style={{
+                              marginLeft: "auto",
+                              marginRight: "30px",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => removeItem(item?.title)}
+                          />
+                        </Flex>
+                      );
+                    })
+                  )}
+                </ModalBody>
+
+                <ModalFooter>
+                  <Text mr="auto" ml="20px" fontWeight="bold" mb="10px">
+                    Total: {concatValues()}€
+                  </Text>
+                  <Button colorScheme="blue" mr={3}>
+                    Checkout
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          </Flex>
+        ) : (
+          <Flex>
+            <Flex
+              _hover={{
+                cursor: "pointer",
+                color: "red",
+              }}
+              onClick={() => loginWithRedirect()}
+            >
+              <Text mr="10px">Login</Text>
+              <VscAccount size={24} />
+            </Flex>
+          </Flex>
+        )}
       </Flex>
     </Flex>
   );

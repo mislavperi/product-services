@@ -6,8 +6,7 @@ export default function Home(): JSX.Element {
     {
       title: "Item 1",
       price: "22€",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/800px-Image_created_with_a_mobile_phone.png",
+      image: "",
     },
     {
       title: "item 2",
@@ -18,8 +17,7 @@ export default function Home(): JSX.Element {
     {
       title: "Item 3",
       price: "22€",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/800px-Image_created_with_a_mobile_phone.png",
+      image: "",
     },
   ];
 

@@ -4,12 +4,12 @@ import routes from "./configs/routes";
 function App(): JSX.Element {
   return (
     <>
-      <Navigation />
       <BrowserRouter>
         <Routes>
           {routes.map((route) => {
             return (
               <Route
+                key={route.name}
                 index={route.index}
                 path={route.path}
                 element={route.element}

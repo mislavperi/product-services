@@ -5,11 +5,18 @@ import App from "./App";
 import overrides from "./theme";
 
 import { ChakraProvider } from "@chakra-ui/react";
+import { Auth0Provider } from "@auth0/auth0-react";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <ChakraProvider theme={overrides}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  </ChakraProvider>
+  <Auth0Provider
+    domain={import.meta.env.VITE_AUTH0_DOMAIN}
+    clientId={import.meta.env.VITE_AUTH0_CLIENTID}
+    redirectUri={window.location.origin}
+  >
+    <ChakraProvider theme={overrides}>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </ChakraProvider>
+  </Auth0Provider>
 );

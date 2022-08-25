@@ -6,7 +6,7 @@ config :orders, Orders.Repo,
   password: "root",
   hostname: System.get_env("PGHOST"),
   database: System.get_env("PGDATABASE"),
-  port: 5003,
+  port: System.get_env("PGPORT"),
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -20,7 +20,7 @@ config :orders, Orders.Repo,
 config :orders, OrdersWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {127, 0, 0, 1}, port: 4000],
+  http: [ip: {0, 0, 0, 0}, port: 4000],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,

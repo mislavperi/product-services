@@ -34,6 +34,7 @@ defmodule Main.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.6.11"},
+      {:cors_plug, "~> 3.0"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.6"},
       {:postgrex, ">= 0.0.0"},

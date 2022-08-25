@@ -1,11 +1,11 @@
 version: "3.9"
 
 services:
-  # frontend:
-  #   container_name: product-frontend
-  #   build: client
-  #   ports:
-  #     - 3000:80
+  frontend:
+    container_name: product-frontend
+    build: client
+    ports:
+      - 6060:80
   products:
     container_name: products-service
     build: services/main
@@ -13,10 +13,10 @@ services:
       - PGUSER=postgres
       - PGPASSWORD=root
       - PGDATABASE=products
-      - PGHOST=localhost
-      - PGPORT=5001
+      - PGHOST=product-database
+      - PGPORT=5432
     ports:
-      - 4000:4000
+      - 9997:4000
     depends_on:
       - product-database
   warehouse:
@@ -26,10 +26,10 @@ services:
       - PGUSER=postgres
       - PGPASSWORD=root
       - PGDATABASE=warehouse
-      - PGHOST=localhost
-      - PGPORT=5003
+      - PGHOST=warehouse-database
+      - PGPORT=5432
     ports:
-      - 4001:4000
+      - 9998:4000
     depends_on:
       - warehouse-database
   orders:
@@ -39,18 +39,19 @@ services:
       - PGUSER=postgres
       - PGPASSWORD=root
       - PGDATABASE=orders
-      - PGHOST=localhost
-      - PGPORT=5002
+      - PGHOST=order-database
+      - PGPORT=5432
     ports:
-      - 4002:4000
+      - 9999:4000
     depends_on:
       - order-database
   # auth:
   #   container_name: products-auth
   gateway:
     container_name: product-gateway
-    build: ./nginx
-    command: service nginx start
+    image: nginx:1.17
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
     - "80:80"
   product-database:
