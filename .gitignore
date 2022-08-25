@@ -1,3 +1,4 @@
 /client/node_modules
 /services/.elixir_ls
 /services/auth/.env
+/client/.env
