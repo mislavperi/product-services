@@ -10,6 +10,7 @@ defmodule MainWeb.Router do
 
     scope "/v1" do
       resources("/products", ProductController, except: [:edit])
+      get("/orders", OrderController, :send_order)
     end
   end
 

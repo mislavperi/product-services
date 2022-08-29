@@ -13,7 +13,8 @@ defmodule WarehouseWeb.ProductView do
   def render("product.json", %{product: product}) do
     %{
       id: product.id,
-      title: product.title
+      product_id: product.product_id,
+      amount: product.amount
     }
   end
 end

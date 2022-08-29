@@ -4,7 +4,8 @@ defmodule Orders.Transactions.OrderItems do
 
   schema "order_items" do
     field :order_id, :integer
-    field :order_item, :string
+    field :order_item, :integer
+    field :amount, :integer
 
     timestamps()
   end
@@ -12,7 +13,7 @@ defmodule Orders.Transactions.OrderItems do
   @doc false
   def changeset(order_items, attrs) do
     order_items
-    |> cast(attrs, [:order_id, :order_item])
-    |> validate_required([:order_id, :order_item])
+    |> cast(attrs, [:order_id, :order_item, :amount])
+    |> validate_required([:order_id, :order_item, :amount])
   end
 end

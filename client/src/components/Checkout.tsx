@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { useAuth0 } from "@auth0/auth0-react";
 import { Flex, Image, Box, Text, Button, Heading } from "@chakra-ui/react";
 
 interface Item {
@@ -8,6 +8,7 @@ interface Item {
 
 export default function Checkout() {
   const [items, setItems] = useState([]);
+  const { loginWithRedirect, isAuthenticated } = useAuth0();
 
   useEffect(() => {
     const cartItems = localStorage.getItem("cart") || "";
@@ -24,7 +25,7 @@ export default function Checkout() {
     }, 0);
   };
 
-  return (
+  return isAuthenticated ? (
     <Flex align="center" flexDirection="column">
       <Heading m="20px">Generic store name.com</Heading>
       <Flex
@@ -69,6 +70,11 @@ export default function Checkout() {
         </Flex>
       </Flex>
       <Button m="10px">Return to store</Button>
+    </Flex>
+  ) : (
+    <Flex align="center" justify="center" flexDir="column">
+      <Text>Please login first</Text>
+      <Button onClick={() => loginWithRedirect()}>Login</Button>
     </Flex>
   );
 }

@@ -37,6 +37,8 @@ defmodule Warehouse.Stock do
   """
   def get_product!(id), do: Repo.get!(Product, id)
 
+  def get_product_by_fk(id), do: Repo.get_by!(Product, product_id: id)
+
   @doc """
   Creates a product.
 
@@ -100,5 +102,13 @@ defmodule Warehouse.Stock do
   """
   def change_product(%Product{} = product, attrs \\ %{}) do
     Product.changeset(product, attrs)
+  end
+
+  def get_stocked() do
+    from(
+      product in Product,
+      where: product.amount > 0
+    )
+    |> Repo.all()
   end
 end

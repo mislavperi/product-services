@@ -4,9 +4,9 @@ import Config
 config :warehouse, Warehouse.Repo,
   username: "postgres",
   password: "root",
-  hostname: System.get_env("PGHOST"),
-  database: System.get_env("PGDATABASE"),
-  port: System.get_env("PGPORT"),
+  hostname: "localhost",
+  database: "warehouse",
+  port: 5002,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -20,7 +20,7 @@ config :warehouse, Warehouse.Repo,
 config :warehouse, WarehouseWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {0, 0, 0, 0}, port: 4000],
+  http: [ip: {0, 0, 0, 0}, port: 4002],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,

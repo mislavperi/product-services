@@ -28,7 +28,7 @@ export default function Products() {
   const [refresh, setRefresh] = useState<Boolean>(false);
 
   useEffect(() => {
-    fetch(import.meta.env.VITE_PRODUCT_SERVICE_URL)
+    fetch("/api/products/")
       .then((res) => res.json())
       .then((res) => {
         setItems(res.data);

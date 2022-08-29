@@ -3,12 +3,21 @@ defmodule MainWeb.ProductController do
 
   alias Main.Catalog
   alias Main.Catalog.Product
+  alias Req
 
-  action_fallback MainWeb.FallbackController
+  action_fallback(MainWeb.FallbackController)
 
   def index(conn, _params) do
     products = Catalog.list_products()
-    render(conn, "index.json", products: products)
+
+    stocked_map = Req.get!("http://warehouse-service:4000/api/v1/warehouse").body
+
+    stocked_items =
+      Enum.map(stocked_map["data"], fn item ->
+        Catalog.get_product!(item["product_id"])
+      end)
+
+    render(conn, "index.json", products: stocked_items)
   end
 
   def create(conn, %{"product" => product_params}) do

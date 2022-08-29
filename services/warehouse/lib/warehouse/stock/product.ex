@@ -2,8 +2,10 @@ defmodule Warehouse.Stock.Product do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive Jason.Encoder
   schema "products" do
-    field :title, :string
+    field :product_id, :integer
+    field :amount, :integer
 
     timestamps()
   end
@@ -11,7 +13,7 @@ defmodule Warehouse.Stock.Product do
   @doc false
   def changeset(product, attrs) do
     product
-    |> cast(attrs, [:title])
-    |> validate_required([:title])
+    |> cast(attrs, [:product_id, :amount])
+    |> validate_required([:product_id, :amount])
   end
 end

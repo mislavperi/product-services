@@ -4,9 +4,9 @@ import Config
 config :orders, Orders.Repo,
   username: "postgres",
   password: "root",
-  hostname: System.get_env("PGHOST"),
-  database: System.get_env("PGDATABASE"),
-  port: System.get_env("PGPORT"),
+  hostname: "localhost",
+  database: "orders",
+  port: 5003,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -20,7 +20,7 @@ config :orders, Orders.Repo,
 config :orders, OrdersWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {0, 0, 0, 0}, port: 4000],
+  http: [ip: {0, 0, 0, 0}, port: 4009],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
@@ -60,3 +60,19 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :brod,
+  clients: [
+    kafka_client: [
+      endpoints: [localhost: 9092],
+      auto_start_producers: true
+      # The following :ssl and :sasl configs are not
+      # required when running kafka locally unauthenticated
+      # ssl: true,
+      # sasl: {
+      #   :plain,
+      #   System.get_env("KAFKA_CLUSTER_API_KEY"),
+      #   System.get_env("KAFKA_CLUSTER_API_SECRET")
+      # }
+    ]
+  ]

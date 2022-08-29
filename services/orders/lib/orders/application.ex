@@ -15,9 +15,10 @@ defmodule Orders.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Orders.PubSub},
       # Start the Endpoint (http/https)
-      OrdersWeb.Endpoint
+      OrdersWeb.Endpoint,
       # Start a worker by calling: Orders.Worker.start_link(arg)
       # {Orders.Worker, arg}
+      Orders.Consumer
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

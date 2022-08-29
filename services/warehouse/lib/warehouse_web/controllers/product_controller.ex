@@ -3,8 +3,9 @@ defmodule WarehouseWeb.ProductController do
 
   alias Warehouse.Stock
   alias Warehouse.Stock.Product
+  alias Warehouse
 
-  action_fallback WarehouseWeb.FallbackController
+  action_fallback(WarehouseWeb.FallbackController)
 
   def index(conn, _params) do
     products = Stock.list_products()
@@ -23,6 +24,17 @@ defmodule WarehouseWeb.ProductController do
   def show(conn, %{"id" => id}) do
     product = Stock.get_product!(id)
     render(conn, "show.json", product: product)
+  end
+
+  def get_stock(conn, _params) do
+    products = Stock.get_stocked()
+    render(conn, "index.json", products: products)
+  end
+
+  def reserve_product(conn, params) do
+    IO.inspect(params)
+    Warehouse.reserve_stock(params)
+    text(conn, "JJA")
   end
 
   def update(conn, %{"id" => id, "product" => product_params}) do

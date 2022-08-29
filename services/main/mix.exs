@@ -33,6 +33,8 @@ defmodule Main.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:brod, "~> 3.16"},
+      {:req, "~> 0.3.0"},
       {:phoenix, "~> 1.6.11"},
       {:cors_plug, "~> 3.0"},
       {:phoenix_ecto, "~> 4.4"},
