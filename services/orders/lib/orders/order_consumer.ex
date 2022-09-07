@@ -1,4 +1,8 @@
 defmodule Orders.Consumer do
+  import Jason
+
+  alias Orders.Transactions
+  alias Orders.Transactions.Order
   @behaviour :brod_group_subscriber_v2
 
   def child_spec(_arg) do
@@ -36,7 +40,21 @@ defmodule Orders.Consumer do
 
     Enum.each(message_data, fn msg ->
       {_, _, _, data, _, _, _} = msg
+      decodedData = Jason.decode!(data)
 
+      {:ok, order} =
+        Transactions.create_order(%{
+          account: decodedData["email"],
+          status: "PROCESSING"
+        })
+
+      id = Map.get(order, :id)
+
+      Transactions.create_order_items(%{
+        order_id: id,
+        order_item: decodedData["product_id"],
+        amount: decodedData["amount"]
+      })
     end)
 
     {:ok, :commit, []}

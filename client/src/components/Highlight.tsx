@@ -6,6 +6,7 @@ interface ItemData {
   title: string;
   price: string;
   image: string;
+  description: string;
 }
 
 interface HighlightProps {
@@ -33,14 +34,15 @@ const Highlight: React.FC<HighlightProps> = (props) => {
           >
             <Image
               src={item.image}
-              fallbackSrc="https://dummyimage.com/600x400/000/fff"
+              fallbackSrc="https://cdn.dribbble.com/users/27766/screenshots/3488007/media/ac55b16291e99eb1740c17b4ac793454.png"
             />
-            <Text m="2" fontSize={22}>
+            <Text fontSize="22px" p="4px">
               {item.title}
             </Text>
-            <Text m="2" fontSize={16}>
-              {item.price}
+            <Text fontSize={14} m="5px">
+              {item.description}
             </Text>
+            <Text m="2px">{item.price} €</Text>
           </Flex>
         );
       })}

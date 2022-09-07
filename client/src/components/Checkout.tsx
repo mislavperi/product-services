@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Flex, Image, Box, Text, Button, Heading } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 interface Item {
   price: string;
@@ -9,6 +10,7 @@ interface Item {
 export default function Checkout() {
   const [items, setItems] = useState([]);
   const { loginWithRedirect, isAuthenticated } = useAuth0();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const cartItems = localStorage.getItem("cart") || "";
@@ -23,6 +25,18 @@ export default function Checkout() {
       const num = parseInt(curr.price.split("€")[0]);
       return p + num;
     }, 0);
+  };
+
+  const placeOrder = () => {
+    fetch("/api/products/orders", {
+      method: "POST",
+      headers: {
+        apikey: "7B5zIqmRGXmrJTFmKa99vcit",
+        authorization: localStorage.getItem("access_token"),
+        sub: localStorage.getItem("sub"),
+      },
+      body: JSON.stringify(items),
+    });
   };
 
   return isAuthenticated ? (
@@ -66,10 +80,12 @@ export default function Checkout() {
           <Text fontWeight="bold" mt="10px" mr="45px">
             Total: {concatValues()} €
           </Text>
-          <Button>Checkout</Button>
+          <Button onClick={placeOrder}>Checkout</Button>
         </Flex>
       </Flex>
-      <Button m="10px">Return to store</Button>
+      <Button m="10px" onClick={() => navigate("/products")}>
+        Return to store
+      </Button>
     </Flex>
   ) : (
     <Flex align="center" justify="center" flexDir="column">

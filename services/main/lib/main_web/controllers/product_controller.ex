@@ -1,6 +1,7 @@
 defmodule MainWeb.ProductController do
   use MainWeb, :controller
 
+  import Jason
   alias Main.Catalog
   alias Main.Catalog.Product
   alias Req
@@ -9,8 +10,9 @@ defmodule MainWeb.ProductController do
 
   def index(conn, _params) do
     products = Catalog.list_products()
-
-    stocked_map = Req.get!("http://warehouse-service:4000/api/v1/warehouse").body
+    req = Req.new(url: "/api/v1/warehouse")
+    req = Req.Request.put_header(req, "apikey", "7B5zIqmRGXmrJTFmKa99vcit")
+    stocked_map = Req.get!(req).body
 
     stocked_items =
       Enum.map(stocked_map["data"], fn item ->
@@ -18,6 +20,17 @@ defmodule MainWeb.ProductController do
       end)
 
     render(conn, "index.json", products: stocked_items)
+  end
+
+  def highlight(conn, _params) do
+    products = Catalog.get_highlight()
+    IO.inspect(products)
+
+    if products == nil do
+      send_resp(conn, 200, Jason.encode!([]))
+    end
+
+    render(conn, "index.json", products: products)
   end
 
   def create(conn, %{"product" => product_params}) do

@@ -12,6 +12,8 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     domain={import.meta.env.VITE_AUTH0_DOMAIN}
     clientId={import.meta.env.VITE_AUTH0_CLIENTID}
     redirectUri={window.location.origin}
+    audience="https://dev-jy4007c0.us.auth0.com/api/v2/"
+    scope="read:current_user update:current_user_metadata"
   >
     <ChakraProvider theme={overrides}>
       <React.StrictMode>

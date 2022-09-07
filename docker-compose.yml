@@ -45,8 +45,6 @@ services:
       - 9999:4000
     depends_on:
       - order-database
-  # auth:
-  #   container_name: products-auth
   gateway:
     container_name: product-gateway
     image: nginx:1.17

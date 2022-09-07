@@ -5,12 +5,22 @@ defmodule MainWeb.Router do
     plug(:accepts, ["json"])
   end
 
+  pipeline :authorization do
+    plug(Main.Auth.Authorize)
+  end
+
   scope "/api", MainWeb do
     pipe_through(:api)
 
     scope "/v1" do
       resources("/products", ProductController, except: [:edit])
-      get("/orders", OrderController, :send_order)
+
+      scope "/orders" do
+        pipe_through(:authorization)
+        post("/", OrderController, :send_order)
+      end
+
+      get("/highlight", ProductController, :highlight)
     end
   end
 

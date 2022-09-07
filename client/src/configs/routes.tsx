@@ -1,4 +1,4 @@
-import { Checkout, Home, Orders, Products, Navigation } from "../components";
+import { Checkout, Home, Products, Navigation } from "../components";
 
 interface Routes {
   name: string;
@@ -29,18 +29,6 @@ const routes: Routes[] = [
       <>
         <Navigation />
         <Products />
-      </>
-    ),
-    index: false,
-  },
-  {
-    name: "Home",
-    path: "/orders",
-    privateRoute: true,
-    element: (
-      <>
-        <Navigation />
-        <Orders />
       </>
     ),
     index: false,

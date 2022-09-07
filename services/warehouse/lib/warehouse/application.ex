@@ -15,9 +15,10 @@ defmodule Warehouse.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Warehouse.PubSub},
       # Start the Endpoint (http/https)
-      WarehouseWeb.Endpoint
+      WarehouseWeb.Endpoint,
       # Start a worker by calling: Warehouse.Worker.start_link(arg)
       # {Warehouse.Worker, arg}
+      Warehouse.Auth.Auth0Strategy
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

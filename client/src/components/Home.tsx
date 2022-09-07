@@ -1,30 +1,37 @@
+import React, { useState, useEffect } from "react";
+
 import { Flex, Text, Heading } from "@chakra-ui/react";
 import Highlight from "./Highlight";
 
 export default function Home(): JSX.Element {
-  const data = [
-    {
-      title: "Item 1",
-      price: "22€",
-      image: "",
-    },
-    {
-      title: "item 2",
-      price: "22€",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/800px-Image_created_with_a_mobile_phone.png",
-    },
-    {
-      title: "Item 3",
-      price: "22€",
-      image: "",
-    },
-  ];
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/v1/highlight", {
+      headers: {
+        apikey: "7B5zIqmRGXmrJTFmKa99vcit",
+        authorization: localStorage.getItem("access_token"),
+        sub: localStorage.getItem("sub")
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.data === undefined) {
+          setProducts([]);
+        } else {
+          setProducts(res.data);
+        }
+      });
+  }, []);
 
   return (
     <Flex flexDir="column" align="center">
       <Text fontSize="36px">Product page </Text>
-      <Highlight data={data} />
+      {products.length === 0 ? (
+        <Text> No highlighted products were found</Text>
+      ) : (
+        <Highlight data={products} />
+      )}
     </Flex>
   );
 }

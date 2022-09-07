@@ -18,7 +18,8 @@ defmodule Orders.Application do
       OrdersWeb.Endpoint,
       # Start a worker by calling: Orders.Worker.start_link(arg)
       # {Orders.Worker, arg}
-      Orders.Consumer
+      Orders.Consumer,
+      Orders.Auth.Auth0Strategy
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

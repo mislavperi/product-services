@@ -14,6 +14,7 @@ import {
 import { FcMinus } from "react-icons/fc";
 
 interface Products {
+  id: number;
   title: string;
   image: string;
   description: string;
@@ -28,7 +29,11 @@ export default function Products() {
   const [refresh, setRefresh] = useState<Boolean>(false);
 
   useEffect(() => {
-    fetch("/api/products/")
+    fetch("/api/v1/products", {
+      headers: {
+        apikey: "7B5zIqmRGXmrJTFmKa99vcit",
+      },
+    })
       .then((res) => res.json())
       .then((res) => {
         setItems(res.data);

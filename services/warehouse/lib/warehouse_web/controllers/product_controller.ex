@@ -32,7 +32,6 @@ defmodule WarehouseWeb.ProductController do
   end
 
   def reserve_product(conn, params) do
-    IO.inspect(params)
     Warehouse.reserve_stock(params)
     text(conn, "JJA")
   end

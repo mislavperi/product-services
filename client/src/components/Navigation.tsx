@@ -19,6 +19,7 @@ import {
 import { VscAccount, VscError } from "react-icons/vsc";
 import { AiOutlineShoppingCart, AiOutlineClose } from "react-icons/ai";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useNavigate } from "react-router-dom";
 
 interface Products {
   title: string;
@@ -28,9 +29,37 @@ interface Products {
 }
 
 export default function Navigation(): JSX.Element {
-  const { loginWithRedirect, user, isAuthenticated, logout } = useAuth0();
+  const {
+    loginWithRedirect,
+    user,
+    isAuthenticated,
+    logout,
+    getAccessTokenSilently,
+  } = useAuth0();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [cart, setCart] = useState<Products[]>([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const getUserMetadata = async () => {
+      const domain = "dev-jy4007c0.us.auth0.com";
+
+      try {
+        const accessToken = await getAccessTokenSilently({
+          audience: `https://${domain}/api/v2/`,
+          scope: "read:current_user",
+        });
+
+        localStorage.setItem("access_token", accessToken);
+        localStorage.setItem("sub", user?.sub);
+        console.log(user?.sub);
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+
+    getUserMetadata();
+  }, [getAccessTokenSilently, user]);
 
   const triggerUpdates = () => {
     const items = localStorage.getItem("cart") || "";
@@ -70,9 +99,6 @@ export default function Navigation(): JSX.Element {
         </Link>
         <Link href="/products" m="4">
           Products
-        </Link>
-        <Link href="/orders" m="4">
-          Orders
         </Link>
       </Flex>
       <Flex
@@ -158,7 +184,11 @@ export default function Navigation(): JSX.Element {
                   <Text mr="auto" ml="20px" fontWeight="bold" mb="10px">
                     Total: {concatValues()}€
                   </Text>
-                  <Button colorScheme="blue" mr={3}>
+                  <Button
+                    colorScheme="blue"
+                    mr={3}
+                    onClick={() => navigate("/checkout")}
+                  >
                     Checkout
                   </Button>
                 </ModalFooter>
@@ -172,7 +202,9 @@ export default function Navigation(): JSX.Element {
                 cursor: "pointer",
                 color: "red",
               }}
-              onClick={() => loginWithRedirect()}
+              onClick={() => {
+                loginWithRedirect();
+              }}
             >
               <Text mr="10px">Login</Text>
               <VscAccount size={24} />

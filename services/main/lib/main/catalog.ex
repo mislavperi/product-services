@@ -37,6 +37,8 @@ defmodule Main.Catalog do
   """
   def get_product!(id), do: Repo.get!(Product, id)
 
+  def get_highlight(), do: Product |> where(highlight: true) |> Repo.all()
+
   @doc """
   Creates a product.
 
