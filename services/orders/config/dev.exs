@@ -4,9 +4,9 @@ import Config
 config :orders, Orders.Repo,
   username: "postgres",
   password: "root",
-  hostname: "localhost",
+  hostname: "order-database",
   database: "orders",
-  port: 5003,
+  port: 5432,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -64,7 +64,7 @@ config :phoenix, :plug_init_mode, :runtime
 config :brod,
   clients: [
     kafka_client: [
-      endpoints: [localhost: 9092],
+      endpoints: [broker: 9092],
       auto_start_producers: true
       # The following :ssl and :sasl configs are not
       # required when running kafka locally unauthenticated

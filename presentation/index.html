@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+	<title>reveal.js</title>
+
+	<link rel="stylesheet" href="dist/reset.css" />
+	<link rel="stylesheet" href="dist/reveal.css" />
+	<link rel="stylesheet" href="dist/theme/black.css" />
+	<link rel="stylesheet" href="dist/theme/black.css" />
+
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+		rel="stylesheet" />
+
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css" />
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<h3>Razvoj sigurnih mikroservisnih arhitektura</h3>
+				<small>Mislav Perić</small> <br />
+				<small>PITUP, 2022.</small>
+			</section>
+			<section style="height: 80%; text-align: left">
+				<h3>Mikroservisi</h3>
+				<ul>
+					<li>Tip SOA</li>
+					<li class="fragment">2011. godina</li>
+					<li class="fragment">SOAP i XML</li>
+				</ul>
+			</section>
+			<section style="height: 80%; text-align: left">
+				<h3>Mikroservisi 2</h3>
+				<ul>
+					<li class="fragment">Nezavisnost</li>
+					<li class="fragment">Poslovna domena</li>
+					<li class="fragment">Posredovanje podataka</li>
+					<li class="fragment">Veličina</li>
+					<li class="fragment">Fleksibilnost</li>
+					<li class="fragment">Arhitektura i organizaciaj</li>
+				</ul>
+			</section>
+			<section style="height: 80%; text-align: left">
+				<h3>Prednosti</h3>
+				<ul>
+					<li class="fragment">Homogenost</li>
+					<li class="fragment">Otpornost</li>
+					<li class="fragment">Skalabilnost</li>
+					<li class="fragment">Kompleknost</li>
+					<li class="fragment">Vlasništvo</li>
+				</ul>
+			</section>
+			<section style="height: 80%; text-align: left">
+				<h3>Mane</h3>
+				<ul>
+					<li class="fragment">Razvoj</li>
+					<li class="fragment">Predznanje</li>
+					<li class="fragment">Trošak</li>
+					<li class="fragment">Sigurnost</li>
+					<li class="fragment">Latencija</li>
+					<li class="fragment">Kozistentnost podataka</li>
+				</ul>
+			</section>
+			<section style="height: 80%; text-align: left">
+				<h3>Komunikacija</h3>
+				<ul>
+					<li>Intra-procesa</li>
+					<li>Inter-procesa</li>
+				</ul>
+				<p>Komunikacija preko mreže</p>
+				<ul>
+					<li class="fragment">Sinkrona</li>
+					<li class="fragment">Asinkrona</li>
+				</ul>
+			</section>
+			<section>
+				<h3>Implementacija</h3>
+			</section>
+			<section>
+				<h3>Pregled</h3>
+				<img src="./assets/design.png" alt="" />
+			</section>
+			<section>
+				<section>
+					<pre>
+														<h3>NGINX konfiguracija</h3>
+														<code data-trim data-line-numbers>
+													server {
+														listen 80;
+									
+														location / {
+															proxy_pass http://product-frontend:80;
+														}
+									
+														location ~/api/products/(.*)$ {
+															proxy_pass http://product/api/v1/products/$1;
+														}
+									
+														location ~/api/warehouse/(.*)$ {
+															proxy_pass http://warehouse/api/v1/warehouse/$1;
+														}
+									
+														location ~/api/orders/(.*)$ {
+															proxy_pass http://orders/api/v1/orders/$1;
+														}
+													}
+									
+													upstream product {
+														server products-service:4000;
+													}
+									
+													upstream orders {
+														server orders-service:4000;
+													}
+									
+													upstream warehouse {
+														server warehouse-service:4000;
+													}
+													</code>
+													</pre>
+				</section>
+				<section>
+					<pre>
+																								<code data-trim data-line-numbers="1-5, 8-19, 25, 30, 35">
+																							map $http_apikey $api_client_name {
+																								default "";
+																									
+																								"7B5zIqmRGXmrJTFmKa99vcit" "client_one";
+																							}
+																							server {
+																								listen 80;
+																								location = /_validate_apikey {
+																									internal;
+																									
+																									if ($http_apikey = "") {
+																										return 401; # Unauthorized
+																									}
+																									if ($api_client_name = "") {
+																										return 403; # Forbidden
+																									}
+																									
+																									return 204; # OK (no content)
+																								}
+																								location / {
+																									proxy_pass http://product-frontend:80;
+																								}
+																			
+																								location ~/api/products/(.*)$ {
+																									auth_request /_validate_apikey;
+																									proxy_pass http://product/api/v1/products/$1;
+																								}
+																			
+																								location ~/api/warehouse/(.*)$ {
+																									auth_request /_validate_apikey;
+																									proxy_pass http://warehouse/api/v1/warehouse/$1;
+																								}
+																			
+																								location ~/api/orders/(.*)$ {
+																									auth_request /_validate_apikey;
+																									proxy_pass http://orders/api/v1/orders/$1;
+																								}
+																							}
+																			
+																							upstream product {
+																								server products-service:4000;
+																							}
+																			
+																							upstream orders {
+																								server orders-service:4000;
+																							}
+																			
+																							upstream warehouse {
+																								server warehouse-service:4000;
+																							}
+																							</code>
+																							</pre>
+				</section>
+			</section>
+			<section>
+				<h3>Docker Compose</h3>
+
+				<section>
+					<pre>
+						<code data-trim data-line-numbers>
+							gateway:
+								container_name: product-gateway
+								image: nginx:1.17
+								volumes:
+									- ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+								ports:
+									- "80:80"
+						</code>
+					</pre>
+				</section>
+				<section>
+					<pre>
+						<h3>Servisi</h3>
+						<code data-trim data-line-numbers>
+							products:
+								container_name: products-service
+								build: services/main
+								environment:
+									- PGUSER=postgres
+									- PGPASSWORD=root
+									- PGDATABASE=products
+									- PGHOST=product-database
+									- PGPORT=5432
+								ports:
+									- 9997:4000
+								depends_on:
+									- product-database
+							warehouse:
+								container_name: warehouse-service
+								build: services/warehouse
+								environment:
+									- PGUSER=postgres
+									- PGPASSWORD=root
+									- PGDATABASE=warehouse
+									- PGHOST=warehouse-database
+									- PGPORT=5432
+								ports:
+									- 9998:4000
+								depends_on:
+									- warehouse-database
+							orders:
+								container_name: orders-service
+								build: services/orders
+								environment:
+									- PGUSER=postgres
+									- PGPASSWORD=root
+									- PGDATABASE=orders
+									- PGHOST=order-database
+									- PGPORT=5432
+								ports:
+									- 9999:4000
+								depends_on:
+									- order-database
+						</code>
+					</pre>
+				</section>
+				<section>
+					<h3>Klijent</h3>
+					<pre>
+						<code data-trim data-line-numbers>
+							frontend:
+								container_name: product-frontend
+								build: client
+								ports:
+									- 6060:80
+						</code>
+					</pre>
+				</section>
+
+			</section>
+			<section>
+				<h3>Autentifikacija</h3>
+
+				<section>
+					<pre>
+																				<code data-trim data-line-numbers>
+																					import { useAuth0 } from "@auth0/auth0-react";
+																					...
+																					const {
+																						loginWithRedirect,
+																						user,
+																						isAuthenticated,
+																						logout,
+																						getAccessTokenSilently,
+																					} = useAuth0();
+																					useEffect(() => {
+																					const getUserMetadata = async () => {
+																					const domain = "dev-jy4007c0.us.auth0.com";
+																					
+																					try {
+																						const accessToken = await getAccessTokenSilently({
+																							audience: `https://${domain}/api/v2/`,
+																							scope: "read:current_user",
+																						});
+																					
+																						localStorage.setItem("access_token", accessToken);
+																						localStorage.setItem("sub", user?.sub);
+																					} catch (e) {
+																						console.log(e.message);
+																						}
+																					};
+																					
+																						getUserMetadata();
+																					}, [getAccessTokenSilently, user]);
+																				</code>
+																			</pre>
+				</section>
+				<section>
+					<pre>
+						<h3>order.ex</h3>
+						<code data-trim data-line-numbers>
+							def send_order(conn, params) do
+							sub = get_sub(conn)
+							
+							case get_token(conn) do
+							{:ok, token} ->
+								req = Req.new(url: URI.encode("https://dev-jy4007c0.us.auth0.com/api/v2/users/" <> sub))
+									req = Req.Request.put_header(req, "Authorization", "Bearer " <> token)
+							
+										Enum.each(params["_json"], fn item ->
+											value = %{
+												email: Req.get!(req).body["email"],
+												product_id: item["product_id"],
+												amount: item["amount"]
+											}
+							
+										encoded = Jason.encode!(value)
+										:brod.produce_sync(:kafka_client, "products.orders", :hash, "order_set", encoded)
+										end)
+							
+								{:error, error} ->
+									handle_error_response(conn, error)
+								end
+							end
+						</code>
+					</pre>
+				</section>
+			</section>
+			<section>
+				<h3>Kafka</h3>
+				<pre>
+					<code data-trim data-line-numbers >
+						zookeeper:
+							image: confluentinc/cp-zookeeper:7.0.1
+							container_name: zookeeper
+							environment:
+								ZOOKEEPER_CLIENT_PORT: 2181
+								ZOOKEEPER_TICK_TIME: 2000
+						
+						broker:
+							image: confluentinc/cp-kafka:7.0.1
+							container_name: broker
+							ports:
+								- "9092:9092"
+							depends_on:
+							- zookeeper
+							environment:
+								KAFKA_BROKER_ID: 1
+								KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+								KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+								KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
+								KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+								KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+								KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+						init-kafka:
+							image: confluentinc/cp-kafka:6.1.1
+							depends_on:
+								- broker
+							entrypoint: ["/bin/sh", "-c"]
+							command: |
+								"
+								# blocks until kafka is reachable
+								kafka-topics --bootstrap-server broker:29092 --list
+						
+								echo -e 'Creating kafka topics'
+								kafka-topics --bootstrap-server broker:29092 --create --if-not-exists --topic products.orders --replication-factor 1
+								--partitions 1
+						
+								echo -e 'Successfully created the following topics:'
+								kafka-topics --bootstrap-server broker:29092 --list
+								"
+					</code>
+				</pre>
+			</section>
+			<section>
+				<h3>Komunikacija između servisa</h3>
+				<section>
+					<pre>
+						<h3>Client - zahtjev</h3>
+						<code data-trim data-line-numbers>
+					const placeOrder = () => {
+						fetch("/api/products/orders", {
+							method: "POST",
+							headers: {
+							apikey: "7B5zIqmRGXmrJTFmKa99vcit",
+							authorization: localStorage.getItem("access_token"),
+							sub: localStorage.getItem("sub"),
+						},
+						body: JSON.stringify(items),
+					});
+					};
+						</code>
+					</pre>
+
+				</section>
+				<section>
+					<pre>
+						<code data-trim data-line-numbers>
+								scope "/orders" do
+									pipe_through(:authorization)
+									post("/", OrderController, :send_order)
+								end
+						</code>
+					</pre>
+				</section>
+				<section>
+					<pre>
+						<code data-trim data-line-numbers>
+							def send_order(conn, params) do
+								case Warehouse.reserve_stock(params) do
+									:ok -> 
+										case Order.send_order(conn, params) do
+											:ok -> nil
+											:error -> send_resp(conn, 412, "kafka error")
+										end
+
+									:error ->
+										send_resp(conn, 412, "error")
+									end
+							
+								send_resp(conn, 200, "good")
+							end
+						</code>
+					</pre>
+				</section>
+				<section>
+					<pre>
+						<code data-trim data-line-numbers>
+							def reserve_stock(params) do
+								req = Req.new(url: "/api/v1/stock/reserve")
+								req = Req.Request.put_header(req, "apikey", "7B5zIqmRGXmrJTFmKa99vcit")
+								%Req.Response{body: body, headers: headers, private: private, status: status} =
+								Req.post!(req, json: params)
+							
+								case status do
+									200 -> :ok
+									status when status != 200 -> :error
+								end
+							end
+						</code>
+					</pre>
+				</section>
+				<section>
+					<pre>
+						<code data-trim data-line-numbers>
+							def reserve_stock(items) do
+								Enum.each(
+									Map.get(items, "_json"),
+									fn item ->
+										product = Stock.get_product_by_fk(item["product_id"])
+							
+									if Map.get(product, :product_id) - item["amount"] < 0 do raise "Product request is more than amount in stock" end end )
+									Enum.each( Map.get(items, "_json" ), fn item ->
+										product = Stock.get_product_by_fk(item["product_id"])
+							
+										Product.changeset(product, %{
+										amount: Map.get(product, :amount) - item["amount"]
+									})
+									|> Repo.update()
+									end
+								)
+							end
+						</code>
+					</pre>
+				</section>
+				<section>
+					<pre>
+						<code data-trim data-line-numbers>
+							def send_order(conn, params) do
+								sub = get_sub(conn)
+							
+								case get_token(conn) do
+								{:ok, token} ->
+									req = Req.new(url: URI.encode("https://dev-jy4007c0.us.auth0.com/api/v2/users/" <> sub))
+										req = Req.Request.put_header(req, "Authorization", "Bearer " <> token)
+							
+										Enum.each(params["_json"], fn item ->
+											value = %{
+											email: Req.get!(req).body["email"],
+											product_id: item["product_id"],
+											amount: item["amount"]
+										}
+							
+									encoded = Jason.encode!(value)
+									:brod.produce_sync(:kafka_client, "products.orders", :hash, "order_set", encoded)
+									end)
+							
+									{:error, error} ->
+										handle_error_response(conn, error)
+									end
+								end
+						</code>
+					</pre>
+				</section>
+				<section>
+					<pre>
+						<code data-trim data-line-numbers>
+@impl :brod_group_subscriber_v2
+def handle_message(message, _state) do
+	{_, _, _, _, message_data} = message
+
+	Enum.each(message_data, fn msg ->
+		{_, _, _, data, _, _, _} = msg
+		decodedData = Jason.decode!(data)
+
+		{:ok, order} =
+			Transactions.create_order(%{
+				account: decodedData["email"],
+				status: "PROCESSING"
+			})
+
+		id = Map.get(order, :id)
+
+		Transactions.create_order_items(%{
+			order_id: id,
+			order_item: decodedData["product_id"],
+			amount: decodedData["amount"]
+		})
+	end)
+
+	{:ok, :commit, []}
+end
+						</code>
+					</pre>
+				</section>
+			</section>
+			<section>
+				<h3>Problemi i bolji pristupi</h3>
+				<ul>
+					<li>Autentifikacija</li>
+					<li>Kafka</li>
+					<li>Orkestracija</li>
+					<li>Refactoring</li>
+				</ul>
+			</section>
+		</div>
+	</div>
+
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script>
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			hash: true,
+
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+		});
+	</script>
+</body>
+
+</html>

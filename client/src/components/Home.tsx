@@ -7,11 +7,11 @@ export default function Home(): JSX.Element {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    fetch("/api/v1/highlight", {
+    fetch("/api/highlight", {
       headers: {
         apikey: "7B5zIqmRGXmrJTFmKa99vcit",
-        authorization: localStorage.getItem("access_token"),
-        sub: localStorage.getItem("sub")
+        authorization: localStorage.getItem("access_token") || "",
+        sub: localStorage.getItem("sub") || ""
       },
     })
       .then((res) => res.json())

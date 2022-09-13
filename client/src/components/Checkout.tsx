@@ -32,8 +32,8 @@ export default function Checkout() {
       method: "POST",
       headers: {
         apikey: "7B5zIqmRGXmrJTFmKa99vcit",
-        authorization: localStorage.getItem("access_token"),
-        sub: localStorage.getItem("sub"),
+        authorization: localStorage.getItem("access_token") || "",
+        sub: localStorage.getItem("sub") || "",
       },
       body: JSON.stringify(items),
     });

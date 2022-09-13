@@ -10,7 +10,7 @@ defmodule MainWeb.ProductController do
 
   def index(conn, _params) do
     products = Catalog.list_products()
-    req = Req.new(url: "/api/v1/warehouse")
+    req = Req.new(url: "/api/warehouse")
     req = Req.Request.put_header(req, "apikey", "7B5zIqmRGXmrJTFmKa99vcit")
     stocked_map = Req.get!(req).body
 

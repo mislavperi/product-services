@@ -44,7 +44,7 @@ import_config "#{config_env()}.exs"
 config :brod,
   clients: [
     kafka_client: [
-      endpoints: [localhost: 9092],
+      endpoints: [broker: 9092],
       auto_start_producers: true,
       # The following :ssl and :sasl configs are not
       # required when running kafka locally unauthenticated

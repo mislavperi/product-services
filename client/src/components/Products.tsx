@@ -29,7 +29,7 @@ export default function Products() {
   const [refresh, setRefresh] = useState<Boolean>(false);
 
   useEffect(() => {
-    fetch("/api/v1/products", {
+    fetch("/api/products", {
       headers: {
         apikey: "7B5zIqmRGXmrJTFmKa99vcit",
       },

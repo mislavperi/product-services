@@ -4,9 +4,9 @@ import Config
 config :main, Main.Repo,
   username: "postgres",
   password: "root",
-  hostname: "localhost",
+  hostname: "product-database",
   database: "products",
-  port: 5001,
+  port: 5432,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10

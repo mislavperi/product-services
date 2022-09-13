@@ -4,9 +4,9 @@ import Config
 config :warehouse, Warehouse.Repo,
   username: "postgres",
   password: "root",
-  hostname: "localhost",
+  hostname: "warehouse-database",
   database: "warehouse",
-  port: 5002,
+  port: 5432,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10

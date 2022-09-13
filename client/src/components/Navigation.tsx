@@ -51,10 +51,9 @@ export default function Navigation(): JSX.Element {
         });
 
         localStorage.setItem("access_token", accessToken);
-        localStorage.setItem("sub", user?.sub);
-        console.log(user?.sub);
+        localStorage.setItem("sub", user?.sub || "");
       } catch (e) {
-        console.log(e.message);
+        console.log(e);
       }
     };
 

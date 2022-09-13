@@ -1,4 +1,3 @@
-import { Navigation } from "./components";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import routes from "./configs/routes";
 function App(): JSX.Element {

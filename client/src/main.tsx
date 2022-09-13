@@ -9,8 +9,8 @@ import { Auth0Provider } from "@auth0/auth0-react";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <Auth0Provider
-    domain={import.meta.env.VITE_AUTH0_DOMAIN}
-    clientId={import.meta.env.VITE_AUTH0_CLIENTID}
+    domain="dev-jy4007c0.us.auth0.com"
+    clientId="25eX7KWNIzOL6sh1JVcDMVvRIVBtvTPG"
     redirectUri={window.location.origin}
     audience="https://dev-jy4007c0.us.auth0.com/api/v2/"
     scope="read:current_user update:current_user_metadata"

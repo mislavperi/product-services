@@ -6,6 +6,10 @@ services:
     build: client
     ports:
       - 6060:80
+    environment:
+      - VITE_AUTH0_DOMAIN=dev-jy4007c0.us.auth0.com
+      - VITE_AUTH0_CLIENTID=25eX7KWNIzOL6sh1JVcDMVvRIVBtvTPG
+      - VITE_PRODUCT_SERVICE_URL=http://localhost:9997/api/v1/products/
   products:
     container_name: products-service
     build: services/main
